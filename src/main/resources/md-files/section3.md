@@ -21,3 +21,7 @@
     - ```<form>``` 태그를 사용해 POST 요청
     - ```<a>``` 태그를 사용해 GET 요청
         - SecurityContextLogoutHandler 이용
+
+2. 인증 여부에 따라 로그인/로그아웃 표현
+   - ```sec:authorize="isAnonymous()"```
+   - ```sec:authorize="isAuthenticated()""```
