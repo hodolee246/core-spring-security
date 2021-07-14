@@ -33,3 +33,10 @@
    - Authentication 의 details 속성에 저장
 2. AuthenticationDetailsSource
    - WebAuthenticationDetails 객체를 생성
+
+## SimpleUrlAuthenticationFailureHandler, SimpleUrlAuthenticationSuccessHandler
+
+1. SimpleUrlAuthenticationFailureHandler
+    - 로그인에 실패하여 UserDetailsService 혹은 AuthenticationProvider Exception 이 발생한 경우 filter 을 통해  SimpleUrlAuthenticationFailureHandler 에게 전달되며 요청을 처리한다.
+2. SimpleUrlAuthenticationSuccessHandler
+    - 로그인에 성공한 경우 filter 를 통해 SimpleUrlAuthenticationSuccessHandler 이 요청을 받아 처리한다.

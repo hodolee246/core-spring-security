@@ -27,7 +27,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         /* id check */
         AccountContext accountContext = (AccountContext)userDetailsService.loadUserByUsername(username);
         /* password check */
-        if (passwordEncoder.matches(password, accountContext.getAccount().getPassword())) {
+        if (! passwordEncoder.matches(password, accountContext.getAccount().getPassword())) {
             throw new BadCredentialsException("BadCredentialsException password no matches");
         }
 
