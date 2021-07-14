@@ -40,3 +40,9 @@
     - 로그인에 실패하여 UserDetailsService 혹은 AuthenticationProvider Exception 이 발생한 경우 filter 을 통해  SimpleUrlAuthenticationFailureHandler 에게 전달되며 요청을 처리한다.
 2. SimpleUrlAuthenticationSuccessHandler
     - 로그인에 성공한 경우 filter 를 통해 SimpleUrlAuthenticationSuccessHandler 이 요청을 받아 처리한다.
+    
+## Access Denied
+특정 자원에 접근할 수 없는경우 인가 예외가 발생하게 된다.
+    - 이 경우 필터가 처리하는게 아닌 인가 예외 필터가 작동해서 처리한다.
+        - 이 때 핸들러를 이용해 인가 예외를 처리할 수 있다.
+        

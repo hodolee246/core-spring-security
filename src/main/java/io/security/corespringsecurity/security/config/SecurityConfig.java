@@ -2,6 +2,7 @@ package io.security.corespringsecurity.security.config;
 
 import io.security.corespringsecurity.security.common.FormWebAuthenticationDetails;
 import io.security.corespringsecurity.security.common.FormWebAuthenticationDetailsSource;
+import io.security.corespringsecurity.security.handler.CustomAccessDeniedHandler;
 import io.security.corespringsecurity.security.handler.CustomAuthenticationFailureHandler;
 import io.security.corespringsecurity.security.handler.CustomAuthenticationSuccessHandler;
 import io.security.corespringsecurity.security.provider.CustomAuthenticationProvider;
@@ -19,6 +20,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -59,7 +61,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationDetailsSource(formWebAuthenticationDetailsSource)
                 .successHandler(customAuthenticationSuccessHandler)
                 .failureHandler(customAuthenticationFailureHandler)
-                .permitAll();
+                .permitAll()
+        .and()
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler());
+        ;
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        CustomAccessDeniedHandler customAccessDeniedHandler = new CustomAccessDeniedHandler();
+        customAccessDeniedHandler.setErrorPage("/denied");
+        return customAccessDeniedHandler;
     }
 
     @Bean
