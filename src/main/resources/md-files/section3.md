@@ -25,3 +25,11 @@
 2. 인증 여부에 따라 로그인/로그아웃 표현
    - ```sec:authorize="isAnonymous()"```
    - ```sec:authorize="isAuthenticated()""```
+
+## WebAuthenticationDetails, AuthenticationDetailsSource
+
+1. webAuthenticationDetails
+   - 인증 과정 중 전달된 데이터를 저장
+   - Authentication 의 details 속성에 저장
+2. AuthenticationDetailsSource
+   - WebAuthenticationDetails 객체를 생성
