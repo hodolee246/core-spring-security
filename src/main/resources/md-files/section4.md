@@ -18,3 +18,14 @@
         - ```public void init(H http) throws Exception``` : 초기화
         - ```public void configure(H http)``` : 설정
     - HttpSecurity 의 ```apply(C configurer)``` 메서드 사용
+
+## 로그인 Ajax 구현 및 CSRF
+- 헤더 설정
+    - 전송 방식이 Ajax 인지의 여부를 위한 헤더 설정
+        - ```xhr.setRequestHeader("X-Request-With", "XMLHttpRequest")```;
+    - CSRF 헤더 설정
+        - ```<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>```
+        - ```<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>```
+        - ```var csrfHeader = $('meta[name="_csrf_header"]').attr('content')```
+        - ```var csrfToken = $('meta[name="_csrf"]').attr('content')```
+        - ```xhr.setRequestHeader(csrfHeader, csrfToken);```
