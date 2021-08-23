@@ -2,6 +2,7 @@ package io.security.corespringsecurity.controller.login;
 
 import io.security.corespringsecurity.domain.Account;
 import io.security.corespringsecurity.security.token.AjaxAuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,13 +16,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 
+@Slf4j
 @Controller
 public class LoginController {
 
-    @GetMapping("/login")
+    @GetMapping(value = { "/login", "/api/login"} )
     public String login(@RequestParam(value = "error", required = false) String error,
                         @RequestParam(value = "exception", required = false) String exception,
                                                                             Model model) {
+
+        log.info("LoginController error : {}, exception : {}", error, exception);
         model.addAttribute("error", error);
         model.addAttribute("exception", exception);
         return "user/login/login";
