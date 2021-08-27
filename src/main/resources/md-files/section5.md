@@ -77,3 +77,14 @@ url 방식을 사용할때 ```FilterInvocationSecurityMetadataSource``` 인터�
    1. 접근 관리 결정자에게 전달한다 ```decide (Authentication, FilterInvocation, List<ConfigAttribute>)```
 5. 존재하지 않을 경우
    1. 인가처리를 하지 않는다.
+
+## Url 방식 -Map 기반 DB 연동
+
+```
+UrlFilterInvocationSecurityMetadataSource {
+  requestMap(ResourceMap)
+  ResorceMap(ROLE_USER, ROLE_MANAGER, ROLE_ADMIN)  <- DB
+}
+```
+UrlResourcesMapFactoryBean
+  - DB로 부터 얻은 권한/자원 정보를 ```RequsetMap``` 을 빈으로 생성하여 ```UrlFilterInvocationSecurityMetadataSource``` 에 전달
