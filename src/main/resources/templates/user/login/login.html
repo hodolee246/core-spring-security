@@ -31,7 +31,7 @@
             },
             error : function(xhr, status, error) {
                 console.log(error);
-                window.location = '/login?error=true&exception=' + xhr.responseText;
+                window.location = '/api/login?error=true&exception=' + xhr.responseJSON.error
             }
         });
     }
