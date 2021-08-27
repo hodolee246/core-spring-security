@@ -49,10 +49,31 @@ SecurityMatadataSource {
 ```
 
 1. Url
-   - ```ExpressionBasedFilterInvocationSecurityMetadataSource -> DefaultFilterInvocationSecurityMetadataSource -> FilterInvocationSecurityMetadataSource```  
+   1. ```ExpressionBasedFilterInvocationSecurityMetadataSource -> DefaultFilterInvocationSecurityMetadataSource -> FilterInvocationSecurityMetadataSource```  
 2. Method
-   - ```@RolesAllowed("USER") -> MethodSecurityMetadataSource``` 
-   - ```@Secured("ROLE_USER") -> MethodSecurityMetadataSource```
-   - ```@PreAuthorize("hasRole('USER')") -> MethodSecurityMetadataSource```
-   - ```@PostAuthorize("hasRole('USER')") -> MethodSecurityMetadataSource```
-   - ```MapBasedMethodSecurityMetadataSource -> MethodSecurityMetadataSource```
+   1. ```@RolesAllowed("USER") -> MethodSecurityMetadataSource``` 
+   2. ```@Secured("ROLE_USER") -> MethodSecurityMetadataSource```
+   3. ```@PreAuthorize("hasRole('USER')") -> MethodSecurityMetadataSource```
+   4. ```@PostAuthorize("hasRole('USER')") -> MethodSecurityMetadataSource```
+   5. ```MapBasedMethodSecurityMetadataSource -> MethodSecurityMetadataSource```
+
+## FilterInvocationSecurityMetadataSource
+url 방식을 사용할때 ```FilterInvocationSecurityMetadataSource``` 인터페이스를 구현하면 된다. 해당 인터페이스가 하는 일은 아래와 같다
+  - 사용자가 접근하고자 하는 Url 자원에 대한 권한 정보 추출을 한다.
+  - ```AccessDecisionManager``` 접근 관리 결정자 에게 전달하여 인가 처리 수행
+  - DB 로 부터 자원 및 권한 정보를 매핑하여 맵으로 관리
+  - 사용자의 매 요청마다 요청정보에 매핑된 권한 정보 확인
+  
+### 흐름 과정
+
+1. 사용자 요청
+2. ```FilterSecurityInterceptor``` (맨 마지막 보안 필터)가 요청을 받는다
+3. ```FilterInvocationSecurityMetadataSource``` 를 호출하여 권한정보를 추출한다.
+   1. 권한정보는 RequestMap 해당 객체 아래의 정보를 가지고 이를 통해 권한정보를 추출한다.
+      1. 해당 정보는 설정 정보를 통해 가져올 수 있으며, 아래의 정보를 가진 Map객체가 된다. (Config file에 작성한 정보 or DB정보)
+         1. key : URL 자원 정보를 
+         2. value : 자원에 접근하기 필요한 권한정보
+4. 권한 목록이 존재할 경우
+   1. 접근 관리 결정자에게 전달한다 ```decide (Authentication, FilterInvocation, List<ConfigAttribute>)```
+5. 존재하지 않을 경우
+   1. 인가처리를 하지 않는다.
