@@ -1,64 +1,24 @@
 package io.security.corespringsecurity.controller.login;
 
-import io.security.corespringsecurity.domain.Account;
-import io.security.corespringsecurity.security.token.AjaxAuthenticationToken;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+
+import io.security.corespringsecurity.service.RoleService;
+import io.security.corespringsecurity.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.security.Principal;
-
-@Slf4j
 @Controller
 public class LoginController {
+	
+	@Autowired
+	private UserService userService;
 
-    @RequestMapping(value = { "/login", "/api/login"} )
-    public String login(@RequestParam(value = "error", required = false) String error,
-                        @RequestParam(value = "exception", required = false) String exception,
-                        Model model) {
+	@Autowired
+	private RoleService roleService;
+	
+	@GetMapping(value="/denied")
+	public String accessDenied() throws Exception {
 
-        log.info("LoginController get error : {}, exception : {}", error, exception);
-        model.addAttribute("error", error);
-        model.addAttribute("exception", exception);
-        return "user/login/login";
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest req, HttpServletResponse resp) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null) {
-            new SecurityContextLogoutHandler().logout(req, resp, authentication);
-        }
-
-        return "redirect:/login";
-    }
-
-    @GetMapping(value = { "/denied", "/api/denied" })
-    public String accessDenied(@RequestParam(value = "exception", required = false) String exception, Principal principal, Model model) {
-        Account account = null;
-
-        if (principal instanceof UsernamePasswordAuthenticationToken) {
-            account = (Account) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-        } else if (principal instanceof AjaxAuthenticationToken) {
-            account = (Account) ((AjaxAuthenticationToken) principal).getPrincipal();
-        }
-
-        model.addAttribute("username", account.getUsername());
-        model.addAttribute("exception", exception);
-
-        return "user/login/denied";
-    }
-
+		return "user/login/denied";
+	}
 }
