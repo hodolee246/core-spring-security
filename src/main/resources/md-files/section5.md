@@ -87,10 +87,18 @@ UrlFilterInvocationSecurityMetadataSource {
 }
 ```
 UrlResourcesMapFactoryBean
-  - DB로 부터 얻은 권한/자원 정보를 ```RequsetMap``` 을 빈으로 생성하여 ```UrlFilterInvocationSecurityMetadataSource``` 에 전달
+- DB로 부터 얻은 권한/자원 정보를 ```RequsetMap``` 을 빈으로 생성하여 ```UrlFilterInvocationSecurityMetadataSource``` 에 전달
   
-## Url 방식 - 인가처리 실시간 반영하기
+## 인가처리 실시간 반영하기
 
-UrlFilterInvocationSecurityMetadataSource 에 저장된 권한 / 자원정보를 관리자가 수정해서 DB에 반영이 될 경우 실시간으로 반영하여 인가처리할 수 있는 데이터가 반영되도록 하는 작업이다.
+- UrlFilterInvocationSecurityMetadataSource 에 저장된 권한 / 자원정보를 관리자가 수정해서 DB에 반영이 될 경우 실시간으로 반영하여 인가처리할 수 있는 데이터가 반영되도록 하는 작업이다.
 
+## PermitAllFilter 구현
+
+- 인증 및 권한심사를 할 필요가 없는 자원 ```/, /login, /home``` 들을 미리 설정해서 바로 리소스 접근이 가능하도록 하는 필터
  
+- 내부 동작 원리
+    1. FilterSecurityInterceptor 가 요청을 받고 AbstractSecurityInterceptor 에게 인가처리를 요청한다.
+    2. 인가처리 시 List<ConfigAttribute> 값이 존재한다면 AccessDecisionManager 에서 권한심사를 받고 아니면 통과한다.  
+- 응용 동작 구현
+    1. PermitAllFilter 가 요청을 받고 List<RequestMatcher> 에서 예외 자원이 있는지 확인 후 있을 경우 통과하며 없을 경우 AbstractSecurityInterceptor 에서 인가처리를 받는다. 
