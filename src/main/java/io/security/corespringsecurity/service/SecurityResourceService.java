@@ -36,11 +36,8 @@ public class SecurityResourceService {
     //private RoleHierarchyImpl roleHierarchy;
     private AccessIpRepository accessIpRepository;
 
-    public SecurityResourceService(ResourcesRepository resourcesRepository, /*RoleHierarchyImpl roleHierarchy, */RoleHierarchyServiceImpl roleHierarchyService, AccessIpRepository accessIpRepository/*, MapBasedMethodSecurityMetadataSource mapBasedMethodSecurityMetadataSource, AnnotationConfigServletWebServerApplicationContext applicationContext, CustomMethodSecurityInterceptor methodSecurityInterceptor*/) {
+    public SecurityResourceService(ResourcesRepository resourcesRepository) {
         this.resourcesRepository = resourcesRepository;
-        //this.roleHierarchy = roleHierarchy;
-        this.roleHierarchyService = roleHierarchyService;
-        this.accessIpRepository = accessIpRepository;
     }
 
     @Cacheable(value = "resourceList")
@@ -49,15 +46,13 @@ public class SecurityResourceService {
         LinkedHashMap<RequestMatcher, List<ConfigAttribute>> result = new LinkedHashMap<>();
         List<Resources> resourcesList = resourcesRepository.findAllResources();
 
-        resourcesList.forEach(re ->
-                {
-                    List<ConfigAttribute> configAttributeList = new ArrayList<>();
-                    re.getRoleSet().forEach(ro -> {
-                        configAttributeList.add(new SecurityConfig(ro.getRoleName()));
-                        result.put(new AntPathRequestMatcher(re.getResourceName()), configAttributeList);
-                    });
-                }
-        );
+        resourcesList.forEach(resource -> {
+            List<ConfigAttribute> configAttributeList = new ArrayList<>();
+            resource.getRoleSet().forEach(role -> {
+                configAttributeList.add(new SecurityConfig(role.getRoleName()));
+                result.put(new AntPathRequestMatcher(resource.getResourceName()), configAttributeList);
+            });
+        });
         log.debug("cache test");
         return result;
     }
