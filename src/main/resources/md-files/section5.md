@@ -102,3 +102,4 @@ UrlResourcesMapFactoryBean
     2. 인가처리 시 List<ConfigAttribute> 값이 존재한다면 AccessDecisionManager 에서 권한심사를 받고 아니면 통과한다.  
 - 응용 동작 구현
     1. PermitAllFilter 가 요청을 받고 List<RequestMatcher> 에서 예외 자원이 있는지 확인 후 있을 경우 통과하며 없을 경우 AbstractSecurityInterceptor 에서 인가처리를 받는다. 
+       - 인가처리를 하지 않을 자원들은 FilterSecurityInterceptor 처리 보다 PermitAllFilter 로 구현 후 처리해 주는 것이 더욱 간단하다. 
