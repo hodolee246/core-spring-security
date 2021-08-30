@@ -1,7 +1,7 @@
 ## PasswordEncoder
 
 - 비밀번호를 안전하게 암호화 하도록 제공
-- Spring Security 5.0 이전에는 기본 PasswordEncdoer 가 평문을 지원하는 NoOpPasswordEncoder (현재 Deprecated)
+- Spring Security 5.0 이전에는 기본 PasswordEncoder 가 평문을 지원하는 NoOpPasswordEncoder (현재 Deprecated)
 
 1. 생성
     - PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder()

@@ -1,4 +1,4 @@
-package io.security.corespringsecurity.service.impl;
+package io.security.corespringsecurity.service.Impl;
 
 import io.security.corespringsecurity.domain.entity.RoleHierarchy;
 import io.security.corespringsecurity.repository.RoleHierarchyRepository;

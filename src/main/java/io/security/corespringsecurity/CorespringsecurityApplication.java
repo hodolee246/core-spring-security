@@ -8,11 +8,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-public class CoreSpringSecurityApplication {
+public class CorespringsecurityApplication {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(CoreSpringSecurityApplication.class, args);
+        SpringApplication.run(CorespringsecurityApplication.class, args);
     }
 
 }
