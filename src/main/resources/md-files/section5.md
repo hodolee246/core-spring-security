@@ -15,11 +15,6 @@ DB와 연동하여 자원 및 권한을 설정하고 제엏마으로 **동적 �
         - Method
         - Pointcut
 
-## Url 방식 - 도메인 관계도
-```
-Account <- AccountRole -> Role  <- RoleResource -> Resources
-```
-
 ## 주요 아키텍쳐 이해
 
 - 스프링 시큐리티의 인가처리
@@ -39,6 +34,8 @@ http.antMatchers("/user").access("hasRole('USER')")
     - Map 객체는 권한정보를 ```List<ConfigAttribute>``` 타입으로 저장해서 반환해준다.
       ```ExpressionBasedFilterInvocationSecurityMetadataSource.class``` 에서 해당 객체에서 필요한 권한정보를 찾아 반환해준다.
 
+![archi](../md-imgs/ch5-archi.png)
+
 권한정보인 SecurityMatadataSource 를 얻기 위해서는 2가지 방식이 존재한다.
 ```
 SecurityMatadataSource {
@@ -56,6 +53,16 @@ SecurityMatadataSource {
     3. ```@PreAuthorize("hasRole('USER')") -> MethodSecurityMetadataSource```
     4. ```@PostAuthorize("hasRole('USER')") -> MethodSecurityMetadataSource```
     5. ```MapBasedMethodSecurityMetadataSource -> MethodSecurityMetadataSource```
+
+![archi2](../md-imgs/ch5-archi2.png)
+
+## 관리자 시스템 구성
+
+- 도메인
+![domain](../md-imgs/ch5-domain.png)
+
+- 테이블
+![table](../md-imgs/ch5-table.png)
 
 ## FilterInvocationSecurityMetadataSource
 url 방식을 사용할때 ```FilterInvocationSecurityMetadataSource``` 인터페이스를 구현하면 된다. 해당 인터페이스가 하는 일은 아래와 같다
@@ -78,20 +85,20 @@ url 방식을 사용할때 ```FilterInvocationSecurityMetadataSource``` 인터�
 5. 존재하지 않을 경우
     1. 인가처리를 하지 않는다.
 
+![filter-inovation](../md-imgs/ch5-filter-invocation.png)
+
 ## Url 방식 - Map 기반 DB 연동
 
-```
-UrlFilterInvocationSecurityMetadataSource {
-  requestMap(ResourceMap)
-  ResorceMap(ROLE_USER, ROLE_MANAGER, ROLE_ADMIN)  <- DB
-}
-```
+![map-db](../md-imgs/ch5-map-db.png)
+
 UrlResourcesMapFactoryBean
 - DB로 부터 얻은 권한/자원 정보를 ```RequsetMap``` 을 빈으로 생성하여 ```UrlFilterInvocationSecurityMetadataSource``` 에 전달
 
 ## 인가처리 실시간 반영하기
 
 - UrlFilterInvocationSecurityMetadataSource 에 저장된 권한 / 자원정보를 관리자가 수정해서 DB에 반영이 될 경우 실시간으로 반영하여 인가처리할 수 있는 데이터가 반영되도록 하는 작업이다.
+
+![url-filter](../md-imgs/ch5-url-filter.png)
 
 ## PermitAllFilter 구현
 
@@ -104,6 +111,8 @@ UrlResourcesMapFactoryBean
     1. ```PermitAllFilter``` 가 요청을 받고 ```List<RequestMatcher>``` 에서 예외 자원이 있는지 확인 후 있을 경우 통과하며 없을 경우 ```AbstractSecurityInterceptor``` 에서 인가처리를 받는다.
         - 인가처리를 하지 않을 자원들은 ```FilterSecurityInterceptor``` 처리 보다 ```PermitAllFilter``` 로 구현 후 처리해 주는 것이 더욱 간단하다.
 
+![permit](../md-imgs/ch5-permit.png)
+
 ## 계층 권한 적용하기
 
 SpringSecurity 는 Admin - User 권한은 서로 다른 권한으로 취급한다.
@@ -115,6 +124,8 @@ SpringSecurity 는 Admin - User 권한은 서로 다른 권한으로 취급한�
 - RoleHierarchyVoter
     - ```RoleHieerarchy``` 를 생성자로 받으며 이 클래스에서 설정한 규칙이 적용되며 심사함.
 
+![hierarchy](../md-imgs/ch5-hierarchy.png)
+
 ## 아이피 접속 제한하기
 
 - IpAddressVoter
@@ -123,3 +134,5 @@ SpringSecurity 는 Admin - User 권한은 서로 다른 권한으로 취급한�
   - 허용된 IP 이면 ACCESS_GRANTED 가 아닌 ACCESS_ABSTAIN 을 리턴해서 추가 심의를 계속 진행하도록 한다
     - 원래 승인이 되면 ACCESS_GRANTED 를 리턴한다. 
   - 허용된 IP 가 아니면 ACCESS_DENIED 를 리턴하지 않고 즉시 예외 발생하여 최종 자원 접근 거부
+
+![ip](../md-imgs/ch5-ip.png)
