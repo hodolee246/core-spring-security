@@ -14,8 +14,6 @@ public class IpAddressVoter implements AccessDecisionVoter<Object> {
 
     private SecurityResourceService securityResourceService;
 
-//    private static final String REQUEST_URI = "/admin/";
-
     public IpAddressVoter(SecurityResourceService securityResourceService) {
         this.securityResourceService = securityResourceService;
     }

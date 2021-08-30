@@ -5,10 +5,9 @@ import io.security.corespringsecurity.domain.dto.ResourcesDto;
 import io.security.corespringsecurity.domain.entity.Resources;
 import io.security.corespringsecurity.domain.entity.Role;
 import io.security.corespringsecurity.repository.RoleRepository;
-import io.security.corespringsecurity.service.MethodSecurityService;
+import io.security.corespringsecurity.security.metadatasource.UrlSecurityMetadataSource;
 import io.security.corespringsecurity.service.ResourcesService;
 import io.security.corespringsecurity.service.RoleService;
-import io.security.corespringsecurity.service.SecurityResourceService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,15 +30,15 @@ public class ResourcesController {
 	private RoleRepository roleRepository;
 
 	@Autowired
-	MethodSecurityService methodSecurityService;
+	private RoleService roleService;
 
 	@Autowired
-	private RoleService roleService;
+	private UrlSecurityMetadataSource urlSecurityMetadataSource;
 
 	@GetMapping(value="/admin/resources")
 	public String getResources(Model model) throws Exception {
 
-		List<Resources> resources = resourcesService.selectResources();
+		List<Resources> resources = resourcesService.getResources();
 		model.addAttribute("resources", resources);
 
 		return "admin/resource/list";
@@ -55,8 +54,8 @@ public class ResourcesController {
 		Resources resources = modelMapper.map(resourcesDto, Resources.class);
 		resources.setRoleSet(roles);
 
-		resourcesService.insertResources(resources);
-		methodSecurityService.addMethodSecured(resourcesDto.getResourceName(),resourcesDto.getRoleName());
+		resourcesService.createResources(resources);
+		urlSecurityMetadataSource.reload();
 
 		return "redirect:/admin/resources";
 	}
@@ -66,7 +65,11 @@ public class ResourcesController {
 
 		List<Role> roleList = roleService.getRoles();
 		model.addAttribute("roleList", roleList);
-		Resources resources = new Resources();
+
+		ResourcesDto resources = new ResourcesDto();
+		Set<Role> roleSet = new HashSet<>();
+		roleSet.add(new Role());
+		resources.setRoleSet(roleSet);
 		model.addAttribute("resources", resources);
 
 		return "admin/resource/detail";
@@ -77,8 +80,11 @@ public class ResourcesController {
 
 		List<Role> roleList = roleService.getRoles();
         model.addAttribute("roleList", roleList);
-		Resources resources = resourcesService.selectResources(Long.valueOf(id));
-		model.addAttribute("resources", resources);
+		Resources resources = resourcesService.getResources(Long.valueOf(id));
+
+		ModelMapper modelMapper = new ModelMapper();
+		ResourcesDto resourcesDto = modelMapper.map(resources, ResourcesDto.class);
+		model.addAttribute("resources", resourcesDto);
 
 		return "admin/resource/detail";
 	}
@@ -86,9 +92,9 @@ public class ResourcesController {
 	@GetMapping(value="/admin/resources/delete/{id}")
 	public String removeResources(@PathVariable String id, Model model) throws Exception {
 
-		Resources resources = resourcesService.selectResources(Long.valueOf(id));
+		Resources resources = resourcesService.getResources(Long.valueOf(id));
 		resourcesService.deleteResources(Long.valueOf(id));
-		methodSecurityService.removeMethodSecured(resources.getResourceName());
+		urlSecurityMetadataSource.reload();
 
 		return "redirect:/admin/resources";
 	}

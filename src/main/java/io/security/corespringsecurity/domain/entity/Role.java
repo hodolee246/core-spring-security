@@ -10,13 +10,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "ROLE")
-@Data
-@ToString(exclude = {"accounts","resourcesSet"})
+@Getter
+@Setter
+@ToString(exclude = {"users","resourcesSet"})
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Builder
 public class Role implements Serializable {
 
     @Id

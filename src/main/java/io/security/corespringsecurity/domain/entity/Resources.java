@@ -12,15 +12,15 @@ import java.util.Set;
 @Table(name = "RESOURCES")
 @Data
 @ToString(exclude = {"roleSet"})
+@EntityListeners(value = { AuditingEntityListener.class })
 @EqualsAndHashCode(of = "id")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Resources implements Serializable {
 
     @Id
     @GeneratedValue
-    @Column
     private Long id;
 
     @Column(name = "resource_name")

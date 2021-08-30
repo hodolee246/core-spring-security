@@ -1,7 +1,9 @@
 package io.security.corespringsecurity.domain.entity;
 
-import lombok.*;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,9 +11,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "ACCESS_IP")
 @Data
-@EntityListeners(value = { AuditingEntityListener.class})
 @EqualsAndHashCode(of = "id")
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccessIp implements Serializable {
