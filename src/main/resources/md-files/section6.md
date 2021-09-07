@@ -37,3 +37,16 @@
    3. 권한 심사가 통과하면 실제 빈의 메소드를 호출한다.
 
 ![init](../md-imgs/ch6-ing.png)
+
+## Method 방식 - 어노테이션 권한 처리
+- 보안이 필요한 메소드에 설정한다.
+- ```@PreAuthorize```, ```@PostAuthorize```
+    - SpEL 지원
+    - ```@PreAuthorize("hasRole('ROLE_USER') and (#account.user.name == principal.username)")```
+    - ```PrePostAnnotationSecurityMetadataSource``` 가 담당
+- ```@Secured```, ```@RolesAllowed```
+    - SpEL 미지원
+    - ```@Secured ("ROLE_USER")```, ```@RolesAllowed("ROLE_USER")```
+    - ```SecuredAnnotationSecurityMetadataSource```, ```Jsr250MethodSecurityMetadataSource``` 가 담당
+- ```@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)```    
+    - 각각의 어노테이션에 맞는 설정을 true 로 변경 해주어야 한다. (default = false)
