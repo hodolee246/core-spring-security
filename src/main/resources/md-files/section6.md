@@ -50,3 +50,51 @@
     - ```SecuredAnnotationSecurityMetadataSource```, ```Jsr250MethodSecurityMetadataSource``` 가 담당
 - ```@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)```    
     - 각각의 어노테이션에 맞는 설정을 true 로 변경 해주어야 한다. (default = false)
+
+## Mehod 방식 - Map 기반 DB 연동
+
+### Filter 기반 URL 방식
+1. URL 요청 시
+2. ```FilterSecurityInterceptor``` -> ```FilterInvocationSecurityMetadataSource``` <- ```MethodMap``` <- DB
+3. ROLE_USER (권한 목록) -> ```AccessDeniedManager```
+### AOP 기반 Method 방식
+1. Order() Method 요청 시
+2. ```MethpdSecurityInterceptor``` -> ```MethodSecurityMetadataSource``` -> ```MethodMap``` <- DB
+3. ROLE_USER (권한 목록) -> ```AccessDeniedManager```
+
+*```@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)```* 중요
+
+### MapBasedMethodSecurityMetadataSource
+1. 어노테이션 설정 방식이 아닌 맵 기반으로 권한 설정
+2. 이미 기본적인 구현이 되어 있어 DB로부터 자원과 권한정보를 매핑한 데이터를 전달하면 메소드 방식의 인가처리가 이루어지는 클래스
+
+
+### 동작과정
+1. admin() 접근 시 등록된 어드바이스를 통해 ```MethodSecurityInterceptor``` 로 이동
+2. ```MethodSecurityInterceptor``` 에서 ```MapBasedMethodSecurityMetadataSource``` 에게 권한정보를 요청
+3. ```MapBasedMethodSecurityMetadataSource``` 는 DB에서 Map 형식의 권한정보를 조회
+4. 권한목록의 존재여부에 따라 인가 ```decide(Authentication, MethodInvocation, List<ConfigAttribute>)``` -> ```AccessDecisionManager```
+
+![map-db](../md-imgs/ch6-map-db.png)
+
+### MapBaseMethodSecurityMetadataSource Map 기반 DB 연동
+이미 기본적으로 구현이 되어있는 ```MapBaseMethodSecurityMetadataSource``` 에게 DB 에서 조회한 권한을 ResourceMap 형태로 넘겨주면 된다.
+
+- ```MethodResourcesMapFactoryBean``` 
+    - DB로 부터 얻은 권한/자원 정보인 ResourceMap 을 빈으로 생성해서 넘겨주면 된다.
+    
+![resource-map-db](../md-imgs/ch6-resource-map-db.png)
+
+## Method 방식 - ProtectPointcutPostProcessor
+- 메소드 방식의 인가처리를 위한 자원 및 권한정보 설정 시 자원에 포인트 컷 표현식을 사용할 수 있도록 지원하는 클래스
+- 빈 후처리기로서 스프링 초기화 과정에서 빈 들을 검사하여 빈이 가진 메소드 중에서 포인트 컷 표현식과 matching 되는 클래스, 메소드, 권한 정보를 ```MapBasedMethodSecurityMetadataSource``` 에 전달하여 인가처리가 되도록 제공하는 클래스
+- DB 저장 방식
+    - Method 방식 
+        - ```io.security.service.OrderService.order : ROLE_USER```
+    - Pointcut 방식
+        - ```execution(*io.security.service.*Service.*(..)) : ROLE_USER```
+- 설정 클래스에서 빈 생성 시 접근제한자가 package 범위로 되어 있기 때문에 리플렉션을 이용해 빈을 생성한다.
+- MethodResourcesMapFactoryBean
+    - DB로 부터 얻은 권한/자원 정보를 ResourceMap 빈으로 생성해서 ProtectPointcutPostProcessor 에 전달
+
+![resource-map-db](../md-imgs/ch6-pointcut.png)
